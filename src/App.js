@@ -9,6 +9,7 @@ import './App.css'
 function App() {
 	const [menuItems, setMenuItems] = useState([])
 	const [form, setForm] = useState({})
+	const [itemToUpdate, setItemToUpdate] = useState('')
 
 	useEffect(() => {
 		fetch('http://localhost:4040/menu') // fetch in local API
@@ -37,12 +38,12 @@ function App() {
 	const handleUpdateHotdog = e => {
 		e.preventDefault()
 
-		fetch('http://localhost:4040/?title=American Hotdog', {
+		fetch(`http://localhost:4040/?title=${itemToUpdate}`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ title: 'French Hotdog', description: 'Juicy ground pork beef with french fries' }),
+			body: JSON.stringify(form),
 		})
 			.then(res => res.json())
 			.then(data => setMenuItems(data))
@@ -52,7 +53,7 @@ function App() {
 	const handleDeleteHotdog = e => {
 		e.preventDefault()
 
-		fetch('http://localhost:4040/?title=French Hotdog', {
+		fetch(`http://localhost:4040/?title=${itemToUpdate}`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -79,12 +80,19 @@ function App() {
 					placeholder='description'
 					onChange={e => setForm({ ...form, description: e.target.value })}
 				/>
-				<button onClick={handleNewMenuItem}>add</button>
-				<button onClick={handleUpdateHotdog}>Update Hotdog</button>
-				<button onClick={handleDeleteHotdog}>Delete French Hotdog</button>
+				<button onClick={handleNewMenuItem}>Add</button>
+				<button onClick={handleUpdateHotdog}>Update</button>
+				<button onClick={handleDeleteHotdog}>Delete</button>
+				
+				<p>item clicked {itemToUpdate}</p>
 				<ul>
 					{menuItems.map(item => {
-						return <li> {item.title}</li>
+						return (
+							<li style={{ cursor: 'pointer' }} onClick={() => setItemToUpdate(item.title)}>
+								{' '}
+								{item.title}
+							</li>
+						)
 					})}
 				</ul>
 			</header>
